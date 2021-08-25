@@ -1,13 +1,26 @@
 <template>
-  <h2>主页</h2>
+  <div>
+    <navigation class="nav-home">
+      <div slot="center">首页</div>
+    </navigation>
+  </div>
 </template>
 
 <script>
+  import Navigation from 'components/common/navigation/Navigation'
   export default {
-    name: "Home"
+    name: "Home",
+    components: {
+      'navigation': Navigation
+    }
   }
 </script>
 
 <style scoped>
-
+  .nav-home {
+    background-color: var(--color-tint);
+  }
+  .nav-home {
+    color: #fff;
+  }
 </style>
