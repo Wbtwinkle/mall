@@ -4,12 +4,14 @@
       <div slot="center">首页</div>
     </navigation>
     <home-swiper :banners="banners"></home-swiper>
+    <home-recommend :recommends="recommends"></home-recommend>
   </div>
 </template>
 
 <script>
   import Navigation from 'components/common/navigation/Navigation'
   import HomeSwiper from './childComponents/HomeSwiper'
+  import HomeRecommend from './childComponents/HomeRecommend'
 
   // 为避免组件和axios请求耦合性过高，又封装了一个中间层home.js
   import {getHomeMultidata} from "network/home";
@@ -24,7 +26,8 @@
     },
     components: {
       'navigation': Navigation,
-      HomeSwiper
+      HomeSwiper,
+      HomeRecommend
     },
     created() {
       getHomeMultidata().then(res => {

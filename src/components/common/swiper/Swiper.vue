@@ -3,9 +3,11 @@
       <div class="swiper" @touchstart="touchStart" @touchmove="touchMove" @touchend="touchEnd">
         <slot></slot>
       </div>
-      <slot name="indicator"></slot>
+      <!-- 这个是只有一张图片时使用的slot -->
+      <!--<slot name="indicator"></slot>-->
       <div class="indicator">
         <slot name="indicator" v-if="showIndicator && slideCount>1">
+          <!-- 对数字slideCount也可以使用item in slideCount？？？ -->
           <div v-for="(item, index) in slideCount" class="indi-item" :class="{active: index === currentIndex-1}" :key="index.id"></div>
         </slot>
       </div>
@@ -16,18 +18,22 @@
 	export default {
 		name: "Swiper",
     props: {
+		  // 每隔多长时间切换一张图片
       interval: {
 		    type: Number,
         default: 3000
       },
+      // 延迟多长时间开始轮播
       animDuration: {
 		    type: Number,
         default: 300
       },
+      // 鼠标拖动图片长度比例，超过则切换，否则回弹
       moveRatio: {
         type: Number,
         default: 0.25
       },
+      // 是否展示指示器
       showIndicator: {
         type: Boolean,
         default: true
@@ -73,6 +79,7 @@
         this.scrolling = true;
 
         // 1.开始滚动动画
+        /* transition使得transform操作执行需要时长为animDuration */
         this.swiperStyle.transition ='transform '+ this.animDuration + 'ms';
         this.setTransform(currentPosition);
 
@@ -107,7 +114,10 @@
        * 设置滚动的位置
        */
       setTransform: function (position) {
+        /* js反引号【tab键上面那个符号】 在反引号中使用${xxx}则括号内的xxx会被当做变量 */
         this.swiperStyle.transform = `translate3d(${position}px, 0, 0)`;
+
+        /* 下面两行代码解决兼容性问题，同时因为带有-字符，不能直接使用【.属性名】来操作 */
         this.swiperStyle['-webkit-transform'] = `translate3d(${position}px), 0, 0`;
         this.swiperStyle['-ms-transform'] = `translate3d(${position}px), 0, 0`;
       },
@@ -117,20 +127,23 @@
        */
 		  handleDom: function () {
         // 1.获取要操作的元素
+        /* 相当于Pink ul */
         let swiperEl = document.querySelector('.swiper');
+        /* 相当于Pink li, 即要展示的图片的个数 */
         let slidesEls = swiperEl.getElementsByClassName('slide');
 
         // 2.保存个数
         this.slideCount = slidesEls.length;
 
-        // 3.如果大于1个, 那么在前后分别添加一个slide
+        // 3.如果大于1个, 那么在前后分别添加一个slide, 因为只有一张图片不需要轮播
         if (this.slideCount > 1) {
+          /* 复制第一张和最后一张图片，实现无缝轮播 */
           let cloneFirst = slidesEls[0].cloneNode(true);
           let cloneLast = slidesEls[this.slideCount - 1].cloneNode(true);
           swiperEl.insertBefore(cloneLast, slidesEls[0]);
           swiperEl.appendChild(cloneFirst);
-          this.totalWidth = swiperEl.offsetWidth;
-          this.swiperStyle = swiperEl.style;
+          this.totalWidth = swiperEl.offsetWidth; // 相当于一张图片的大小
+          this.swiperStyle = swiperEl.style; // ？？？
         }
 
         // 4.让swiper元素, 显示第一个(目前是显示前面添加的最后一个元素)
@@ -182,28 +195,28 @@
         this.startTimer();
       },
 
-      /**
-       * 控制上一个, 下一个
-       */
-      previous: function () {
-        this.changeItem(-1);
-      },
-
-      next: function () {
-        this.changeItem(1);
-      },
-
-      changeItem: function (num) {
-        // 1.移除定时器
-        this.stopTimer();
-
-        // 2.修改index和位置
-        this.currentIndex += num;
-        this.scrollContent(-this.currentIndex * this.totalWidth);
-
-        // 3.添加定时器
-        this.startTimer();
-      }
+      // /**
+      //  * 控制上一个, 下一个
+      //  */
+      // previous: function () {
+      //   this.changeItem(-1);
+      // },
+      //
+      // next: function () {
+      //   this.changeItem(1);
+      // },
+      //
+      // changeItem: function (num) {
+      //   // 1.移除定时器
+      //   this.stopTimer();
+      //
+      //   // 2.修改index和位置
+      //   this.currentIndex += num;
+      //   this.scrollContent(-this.currentIndex * this.totalWidth);
+      //
+      //   // 3.添加定时器
+      //   this.startTimer();
+      // }
     }
 	}
 </script>
@@ -238,6 +251,7 @@
     margin: 0 5px;
   }
 
+  /* 这个不能分开，.indi-item和.active是同一个标签的类，不是父子级关系 */
   .indi-item.active {
     background-color: rgba(212,62,46,1.0);
   }
