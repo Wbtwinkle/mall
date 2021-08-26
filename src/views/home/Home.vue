@@ -3,11 +3,14 @@
     <navigation class="nav-home">
       <div slot="center">首页</div>
     </navigation>
+    <home-swiper :banners="banners"></home-swiper>
   </div>
 </template>
 
 <script>
   import Navigation from 'components/common/navigation/Navigation'
+  import HomeSwiper from './childComponents/HomeSwiper'
+
   // 为避免组件和axios请求耦合性过高，又封装了一个中间层home.js
   import {getHomeMultidata} from "network/home";
 
@@ -20,7 +23,8 @@
       }
     },
     components: {
-      'navigation': Navigation
+      'navigation': Navigation,
+      HomeSwiper
     },
     created() {
       getHomeMultidata().then(res => {
