@@ -35,8 +35,8 @@
 <style scoped>
   .tab-control {
     display: flex;
-    height: 44px;
-    line-height: 44px;
+    height: 38px;
+    line-height: 38px;
     font-size: 15px;
   }
   .tab-control div {

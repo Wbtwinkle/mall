@@ -7,6 +7,7 @@
     <home-recommend :recommends="recommends"></home-recommend>
     <home-feature-view></home-feature-view>
     <tab-control :text="['流行','新款','精选']"></tab-control>
+    <goods :goods="goods['pop'].list"></goods>
     <li>1</li>
     <li>2</li>
     <li>3</li>
@@ -67,15 +68,23 @@
   import HomeFeatureView from './childComponents/HomeFeatureView'
 
   import TabControl from 'components/content/tabControl/TabControl'
+  import Goods from 'components/content/goods/Goods'
+  // import GoodsItem from  'components/content/goods/GoodsItem'
+
   // 为避免组件和axios请求耦合性过高，又封装了一个中间层home.js
-  import {getHomeMultidata} from "network/home";
+  import {getHomeMultidata, getHomeGoods} from "network/home";
 
   export default {
     name: "Home",
     data() {
       return {
         banners: [],
-        recommends: []
+        recommends: [],
+        goods: {
+          'pop': {page: 0, list: []},
+          'new': {page: 0, list: []},
+          'sell': {page: 0, list: []}
+        }
       }
     },
     components: {
@@ -83,15 +92,31 @@
       HomeSwiper,
       HomeRecommend,
       HomeFeatureView,
-      TabControl
+      TabControl,
+      Goods,
+      // GoodsItem
     },
     created() {
-      getHomeMultidata().then(res => {
-        // console.log(res);
-        // created生命周期函数回调完成后会销毁，因此其中数据需要保存在data中
-        this.recommends = res.data.recommend.list;
-        this.banners = res.data.banner.list;
-      });
+      this.getHomeMultidata();
+      this.getHomeGoods('pop');
+      this.getHomeGoods('new');
+      this.getHomeGoods('sell');
+    },
+    methods: {
+      getHomeMultidata() {
+        getHomeMultidata().then(res => {
+          // created生命周期函数回调完成后会销毁，因此其中数据需要保存在data中
+          this.recommends = res.data.recommend.list;
+          this.banners = res.data.banner.list;
+        });
+      },
+      getHomeGoods(type) {
+        let p = this.goods[type].page + 1;
+        getHomeGoods(type, p).then(res => {
+          this.goods[type].list.push(...res.data.list);
+          this.goods[type].page++;
+        })
+      }
     }
   }
 </script>
@@ -112,5 +137,7 @@
     border-radius: 2px;
     position: sticky;
     top: 44px;
+    z-index: 97;
   }
+
 </style>
