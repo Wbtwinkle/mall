@@ -23,7 +23,7 @@
 		    type: Number,
         default: 3000
       },
-      // 延迟多长时间开始轮播
+      // 切换图片过渡时间
       animDuration: {
 		    type: Number,
         default: 300
